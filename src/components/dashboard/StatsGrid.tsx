@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+
 
 interface StatCardProps {
     icon: string;
@@ -42,8 +42,8 @@ export function StatCard({ icon, iconColor, label, value, badge, badgeColor = "d
                 {badge && (
                     <span
                         className={`text-xs font-mono px-2 py-1 rounded ${badgeColor === "success"
-                                ? "text-success bg-success/10"
-                                : "text-slate-500 bg-[#0b1121]"
+                            ? "text-success bg-success/10"
+                            : "text-slate-500 bg-[#0b1121]"
                             }`}
                     >
                         {badge}
