@@ -1,35 +1,33 @@
-name: Build and Release
+name: Release
 
 on:
   push:
     tags:
       - 'v*'
-  workflow_dispatch:
 
 jobs:
-  build:
+  release:
+    permissions:
+      contents: write
     strategy:
       fail-fast: false
       matrix:
-        platform: [windows-latest]
+        include:
+          - platform: windows-latest
+            args: ''
 
     runs-on: ${{ matrix.platform }}
-
+    
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-
       - name: Setup Bun
-        uses: oven-sh/setup-bun@v1
+        uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
 
-      - name: Install Rust stable
+      - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
 
       - name: Rust cache
@@ -40,7 +38,7 @@ jobs:
       - name: Install frontend dependencies
         run: bun install
 
-      - name: Build Tauri app
+      - name: Build and release
         uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -50,19 +48,22 @@ jobs:
           releaseBody: |
             ## SentinelGuard Release
             
-            **Endpoint Security & Hardware Access Control System**
+            Endpoint Security and Hardware Access Control System for Windows.
             
-            ### What's New
-            - USB device detection and monitoring
+            ### Features
+            - Real-time USB device monitoring
             - Whitelist management for trusted devices
-            - Real-time security event logging
-            - Device blocking capabilities (requires admin rights)
+            - Security event logging with search and export
+            - Device blocking capabilities
             
-            ### Installation
-            1. Download the `.msi` or `.exe` installer below
-            2. Run the installer
-            3. Launch SentinelGuard
+            ### Downloads
             
-            >  **Note:** Device blocking features require running the app as Administrator.
-          releaseDraft: false
+            | Platform | Download |
+            |----------|----------|
+            | Windows | `.msi` or `.exe` installer below |
+            
+            ### Note
+            Device blocking features require running the app as Administrator.
+          releaseDraft: true
           prerelease: false
+          args: ${{ matrix.args }}
