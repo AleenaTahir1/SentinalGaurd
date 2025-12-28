@@ -1,0 +1,31 @@
+mod commands;
+mod models;
+mod services;
+
+use commands::{devices, whitelist, logs};
+
+#[cfg_attr(mobile, tauri::mobile_entry_point)]
+pub fn run() {
+    tauri::Builder::default()
+        .plugin(tauri_plugin_opener::init())
+        .invoke_handler(tauri::generate_handler![
+            // Device commands
+            devices::get_connected_devices,
+            devices::enable_device,
+            devices::disable_device,
+            devices::get_dashboard_stats,
+            // Whitelist commands
+            whitelist::get_whitelist,
+            whitelist::add_to_whitelist,
+            whitelist::remove_from_whitelist,
+            whitelist::clear_whitelist,
+            // Log commands
+            logs::get_event_logs,
+            logs::add_event_log,
+            logs::clear_logs,
+            logs::export_logs,
+            logs::get_log_stats,
+        ])
+        .run(tauri::generate_context!())
+        .expect("error while running tauri application");
+}
