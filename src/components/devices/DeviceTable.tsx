@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Toggle } from "../ui/Toggle";
 import { StatusBadge } from "../ui/StatusBadge";
 
@@ -15,7 +14,6 @@ export interface Device {
 interface DeviceRowProps {
     device: Device;
     onToggle: (id: string, trusted: boolean) => void;
-    onDelete: (id: string) => void;
 }
 
 const iconMap: Record<string, string> = {
@@ -26,23 +24,22 @@ const iconMap: Record<string, string> = {
     "Threat Detected": "warning",
 };
 
-export function DeviceRow({ device, onToggle, onDelete }: DeviceRowProps) {
-    const isThreat = device.threat || !device.trusted;
+export function DeviceRow({ device, onToggle }: DeviceRowProps) {
     const icon = device.threat ? "warning" : iconMap[device.type] || "usb";
 
     return (
         <div
             className={`group grid grid-cols-12 gap-4 px-6 py-4 border-b border-border-dark items-center transition-colors ${device.threat
-                    ? "bg-rose-500/[0.02] hover:bg-rose-500/[0.05]"
-                    : "hover:bg-white/[0.02]"
+                ? "bg-rose-500/[0.02] hover:bg-rose-500/[0.05]"
+                : "hover:bg-white/[0.02]"
                 }`}
         >
             {/* Device Name */}
             <div className="col-span-3 flex items-center gap-3">
                 <div
                     className={`size-10 rounded-full flex items-center justify-center shrink-0 ${device.threat
-                            ? "bg-rose-900/20 text-rose-500"
-                            : "bg-slate-700 text-slate-300"
+                        ? "bg-rose-900/20 text-rose-500"
+                        : "bg-slate-700 text-slate-300"
                         }`}
                 >
                     <span className="material-symbols-outlined text-[20px]">{icon}</span>
@@ -71,13 +68,7 @@ export function DeviceRow({ device, onToggle, onDelete }: DeviceRowProps) {
             </div>
 
             {/* Actions */}
-            <div className="col-span-2 flex items-center justify-end gap-4">
-                <button
-                    onClick={() => onDelete(device.id)}
-                    className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-500 hover:text-rose-400 p-1"
-                >
-                    <span className="material-symbols-outlined text-[20px]">delete</span>
-                </button>
+            <div className="col-span-2 flex items-center justify-end">
                 <Toggle
                     id={`toggle-${device.id}`}
                     checked={device.trusted}
@@ -91,10 +82,9 @@ export function DeviceRow({ device, onToggle, onDelete }: DeviceRowProps) {
 interface DeviceTableProps {
     devices: Device[];
     onToggle: (id: string, trusted: boolean) => void;
-    onDelete: (id: string) => void;
 }
 
-export function DeviceTable({ devices, onToggle, onDelete }: DeviceTableProps) {
+export function DeviceTable({ devices, onToggle }: DeviceTableProps) {
     return (
         <div className="h-full flex flex-col bg-surface-dark border border-border-dark rounded-2xl shadow-xl overflow-hidden">
             {/* Table Header */}
@@ -113,7 +103,6 @@ export function DeviceTable({ devices, onToggle, onDelete }: DeviceTableProps) {
                         key={device.id}
                         device={device}
                         onToggle={onToggle}
-                        onDelete={onDelete}
                     />
                 ))}
             </div>

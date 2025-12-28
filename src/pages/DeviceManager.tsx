@@ -46,15 +46,7 @@ export function DeviceManager() {
         }
     };
 
-    const handleDelete = async (instanceId: string) => {
-        try {
-            await api.removeFromWhitelist(instanceId);
-            // Refresh device list
-            await fetchDevices();
-        } catch (error) {
-            console.error("Failed to remove device:", error);
-        }
-    };
+
 
     const handleScan = async () => {
         setScanning(true);
@@ -113,7 +105,7 @@ export function DeviceManager() {
                         </div>
                     </div>
                 ) : (
-                    <DeviceTable devices={tableDevices} onToggle={handleToggle} onDelete={handleDelete} />
+                    <DeviceTable devices={tableDevices} onToggle={handleToggle} />
                 )}
             </div>
         </div>
