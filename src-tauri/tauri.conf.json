@@ -13,9 +13,11 @@
     "windows": [
       {
         "title": "SentinelGuard",
-        "fullscreen": true,
+        "maximized": true,
         "decorations": false,
-        "resizable": false
+        "resizable": true,
+        "width": 1200,
+        "height": 800
       }
     ],
     "security": {

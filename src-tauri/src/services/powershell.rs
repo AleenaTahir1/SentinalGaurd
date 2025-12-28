@@ -1,5 +1,9 @@
 use std::process::Command;
+use std::os::windows::process::CommandExt;
 use thiserror::Error;
+
+// Windows flag to hide the console window
+const CREATE_NO_WINDOW: u32 = 0x08000000;
 
 #[derive(Error, Debug)]
 pub enum PowerShellError {
@@ -7,19 +11,19 @@ pub enum PowerShellError {
     ExecutionFailed(String),
     #[error("PowerShell returned error: {0}")]
     ScriptError(String),
-    #[error("Failed to parse output: {0}")]
-    ParseError(String),
 }
 
-/// Executes a PowerShell command and returns the output
+/// Executes a PowerShell command and returns the output (hidden, no visible window)
 pub fn execute(script: &str) -> Result<String, PowerShellError> {
     let output = Command::new("powershell")
         .args([
             "-NoProfile",
             "-NonInteractive",
+            "-WindowStyle", "Hidden",
             "-Command",
             script,
         ])
+        .creation_flags(CREATE_NO_WINDOW)
         .output()
         .map_err(|e| PowerShellError::ExecutionFailed(e.to_string()))?;
 
@@ -49,7 +53,7 @@ pub fn get_usb_devices_json() -> Result<String, PowerShellError> {
 pub fn disable_device(instance_id: &str) -> Result<(), PowerShellError> {
     let script = format!(
         r#"Disable-PnpDevice -InstanceId '{}' -Confirm:$false -ErrorAction Stop"#,
-        instance_id.replace("'", "''") // Escape single quotes
+        instance_id.replace("'", "''")
     );
     execute(&script)?;
     Ok(())
@@ -63,20 +67,4 @@ pub fn enable_device(instance_id: &str) -> Result<(), PowerShellError> {
     );
     execute(&script)?;
     Ok(())
-}
-
-/// Gets detailed info about a specific device
-pub fn get_device_info(instance_id: &str) -> Result<String, PowerShellError> {
-    let script = format!(
-        r#"
-        Get-PnpDevice -InstanceId '{}' -ErrorAction SilentlyContinue | 
-        Select-Object @{{N='instance_id';E={{$_.InstanceId}}}}, 
-                      @{{N='friendly_name';E={{if($_.FriendlyName){{$_.FriendlyName}}else{{'Unknown Device'}}}}}},
-                      @{{N='device_class';E={{$_.Class}}}},
-                      @{{N='status';E={{$_.Status}}}} |
-        ConvertTo-Json -Compress
-        "#,
-        instance_id.replace("'", "''")
-    );
-    execute(&script)
 }
