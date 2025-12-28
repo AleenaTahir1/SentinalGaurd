@@ -1,0 +1,68 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [windows-latest]
+
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: latest
+
+      - name: Install Rust stable
+        uses: dtolnay/rust-action@stable
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: './src-tauri -> target'
+
+      - name: Install frontend dependencies
+        run: bun install
+
+      - name: Build Tauri app
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tagName: ${{ github.ref_name }}
+          releaseName: 'SentinelGuard ${{ github.ref_name }}'
+          releaseBody: |
+            ## SentinelGuard Release
+            
+            **Endpoint Security & Hardware Access Control System**
+            
+            ### What's New
+            - USB device detection and monitoring
+            - Whitelist management for trusted devices
+            - Real-time security event logging
+            - Device blocking capabilities (requires admin rights)
+            
+            ### Installation
+            1. Download the `.msi` or `.exe` installer below
+            2. Run the installer
+            3. Launch SentinelGuard
+            
+            >  **Note:** Device blocking features require running the app as Administrator.
+          releaseDraft: false
+          prerelease: false

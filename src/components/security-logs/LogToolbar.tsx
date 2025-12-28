@@ -1,4 +1,4 @@
-import { useState } from "react";
+
 
 interface FilterChipProps {
     label: string;
@@ -12,8 +12,8 @@ function FilterChip({ label, active = false, color, onClick }: FilterChipProps) 
         <button
             onClick={onClick}
             className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${active
-                    ? "bg-[#223149] border border-[#314668] text-white hover:bg-[#314668]"
-                    : "bg-[#182334] border border-transparent text-[#90a7cb] hover:bg-[#223149] hover:text-white"
+                ? "bg-[#223149] border border-[#314668] text-white hover:bg-[#314668]"
+                : "bg-[#182334] border border-transparent text-[#90a7cb] hover:bg-[#223149] hover:text-white"
                 }`}
         >
             {color && <span className={`size-2 rounded-full ${color}`}></span>}
@@ -28,6 +28,8 @@ interface LogToolbarProps {
     activeFilter: string;
     onFilterChange: (filter: string) => void;
     onExport: () => void;
+    onRefresh: () => void;
+    refreshing?: boolean;
 }
 
 export function LogToolbar({
@@ -36,6 +38,8 @@ export function LogToolbar({
     activeFilter,
     onFilterChange,
     onExport,
+    onRefresh,
+    refreshing = false,
 }: LogToolbarProps) {
     return (
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 gap-4 bg-background-dark/50 border-b border-[#223149] backdrop-blur-sm sticky top-0 z-10">
@@ -86,14 +90,26 @@ export function LogToolbar({
                 </div>
             </div>
 
-            {/* Export Button */}
-            <button
-                onClick={onExport}
-                className="flex items-center justify-center gap-2 px-4 py-2 bg-primary hover:bg-blue-600 text-white text-sm font-bold rounded-full transition-colors shadow-lg shadow-blue-900/20"
-            >
-                <span className="material-symbols-outlined text-[18px]">download</span>
-                <span>Export</span>
-            </button>
+            {/* Action Buttons */}
+            <div className="flex items-center gap-2">
+                <button
+                    onClick={onRefresh}
+                    disabled={refreshing}
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-[#223149] hover:bg-[#314668] text-white text-sm font-bold rounded-full transition-colors"
+                >
+                    <span className={`material-symbols-outlined text-[18px] ${refreshing ? "animate-spin" : ""}`}>
+                        {refreshing ? "progress_activity" : "refresh"}
+                    </span>
+                    <span>Refresh</span>
+                </button>
+                <button
+                    onClick={onExport}
+                    className="flex items-center justify-center gap-2 px-4 py-2 bg-primary hover:bg-blue-600 text-white text-sm font-bold rounded-full transition-colors shadow-lg shadow-blue-900/20"
+                >
+                    <span className="material-symbols-outlined text-[18px]">download</span>
+                    <span>Export</span>
+                </button>
+            </div>
         </div>
     );
 }

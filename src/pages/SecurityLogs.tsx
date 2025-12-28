@@ -10,6 +10,7 @@ export function SecurityLogs() {
     const [searchQuery, setSearchQuery] = useState("");
     const [activeFilter, setActiveFilter] = useState("all");
     const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
 
     const fetchData = async () => {
         try {
@@ -63,6 +64,15 @@ export function SecurityLogs() {
         }
     };
 
+    const handleRefresh = async () => {
+        setRefreshing(true);
+        try {
+            await fetchData();
+        } finally {
+            setRefreshing(false);
+        }
+    };
+
     // Convert EventLog to LogEntryData format
     const logEntries = filteredLogs.map((log) => ({
         id: log.id,
@@ -88,6 +98,8 @@ export function SecurityLogs() {
                 activeFilter={activeFilter}
                 onFilterChange={setActiveFilter}
                 onExport={handleExport}
+                onRefresh={handleRefresh}
+                refreshing={refreshing}
             />
 
             {/* Log Console */}
