@@ -2,7 +2,7 @@ mod commands;
 mod models;
 mod services;
 
-use commands::{devices, whitelist, logs};
+use commands::{devices, whitelist, logs, wifi, system, startup, network};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -25,6 +25,15 @@ pub fn run() {
             logs::clear_logs,
             logs::export_logs,
             logs::get_log_stats,
+            // WiFi commands
+            wifi::get_wifi_profiles,
+            wifi::get_wifi_password,
+            // System commands
+            system::get_system_info,
+            // Startup commands
+            startup::get_startup_programs,
+            // Network commands
+            network::get_network_info,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

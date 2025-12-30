@@ -10,6 +10,10 @@ const mainNav: NavItem[] = [
     { icon: "dashboard", label: "Dashboard", to: "/" },
     { icon: "usb", label: "Devices", to: "/devices" },
     { icon: "terminal", label: "Logs", to: "/logs" },
+    { icon: "wifi", label: "WiFi Password", to: "/wifi" },
+    { icon: "computer", label: "System Info", to: "/system" },
+    { icon: "bolt", label: "Startup Programs", to: "/startup" },
+    { icon: "language", label: "Network", to: "/network" },
 ];
 
 export function Sidebar() {

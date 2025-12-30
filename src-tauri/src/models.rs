@@ -51,3 +51,45 @@ pub struct DashboardStats {
     pub blocked_threats: usize,
     pub is_secure: bool,
 }
+
+/// Represents a saved WiFi profile
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct WifiProfile {
+    pub ssid: String,
+    pub password: Option<String>,
+    pub authentication: String,
+    pub encryption: String,
+}
+
+/// System information
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SystemInfo {
+    pub os_name: String,
+    pub os_version: String,
+    pub computer_name: String,
+    pub total_ram_gb: f64,
+    pub cpu_name: String,
+    pub cpu_cores: u32,
+}
+
+/// Startup program entry
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct StartupProgram {
+    pub name: String,
+    pub command: String,
+    pub location: String,
+    pub user: String,
+}
+
+/// Network adapter information
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct NetworkInfo {
+    pub adapter_name: String,
+    pub ip_address: String,
+    pub subnet_mask: String,
+    pub gateway: String,
+    pub dns_servers: String,
+    pub mac_address: String,
+    pub status: String,
+}
+

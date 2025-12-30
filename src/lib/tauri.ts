@@ -43,6 +43,22 @@ export interface LogStats {
     error: number;
 }
 
+export interface WifiProfile {
+    ssid: string;
+    password: string | null;
+    authentication: string;
+    encryption: string;
+}
+
+export interface SystemInfo {
+    os_name: string;
+    os_version: string;
+    computer_name: string;
+    total_ram_gb: number;
+    cpu_name: string;
+    cpu_cores: number;
+}
+
 // ============================================
 // API Functions
 // ============================================
@@ -133,6 +149,63 @@ export async function getLogStats(): Promise<LogStats> {
     return invoke<LogStats>("get_log_stats");
 }
 
+// WiFi Commands
+export async function getWifiProfiles(): Promise<WifiProfile[]> {
+    if (!isTauri()) return [];
+    return invoke<WifiProfile[]>("get_wifi_profiles");
+}
+
+export async function getWifiPassword(ssid: string): Promise<WifiProfile> {
+    if (!isTauri()) {
+        return { ssid, password: null, authentication: "", encryption: "" };
+    }
+    return invoke<WifiProfile>("get_wifi_password", { ssid });
+}
+
+// System Commands
+export async function getSystemInfo(): Promise<SystemInfo> {
+    if (!isTauri()) {
+        return {
+            os_name: "Unknown",
+            os_version: "",
+            computer_name: "",
+            total_ram_gb: 0,
+            cpu_name: "",
+            cpu_cores: 0,
+        };
+    }
+    return invoke<SystemInfo>("get_system_info");
+}
+
+// Startup Program interface and commands
+export interface StartupProgram {
+    name: string;
+    command: string;
+    location: string;
+    user: string;
+}
+
+export async function getStartupPrograms(): Promise<StartupProgram[]> {
+    if (!isTauri()) return [];
+    return invoke<StartupProgram[]>("get_startup_programs");
+}
+
+// Network Info interface and commands
+export interface NetworkInfo {
+    adapter_name: string;
+    ip_address: string;
+    subnet_mask: string;
+    gateway: string;
+    dns_servers: string;
+    mac_address: string;
+    status: string;
+}
+
+export async function getNetworkInfo(): Promise<NetworkInfo[]> {
+    if (!isTauri()) return [];
+    return invoke<NetworkInfo[]>("get_network_info");
+}
+
 // Convenience API object
 export const api = {
     getConnectedDevices,
@@ -148,4 +221,11 @@ export const api = {
     clearLogs,
     exportLogs,
     getLogStats,
+    getWifiProfiles,
+    getWifiPassword,
+    getSystemInfo,
+    getStartupPrograms,
+    getNetworkInfo,
 };
+
+
