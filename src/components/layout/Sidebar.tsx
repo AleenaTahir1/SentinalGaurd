@@ -14,6 +14,9 @@ const mainNav: NavItem[] = [
     { icon: "computer", label: "System Info", to: "/system" },
     { icon: "bolt", label: "Startup Programs", to: "/startup" },
     { icon: "language", label: "Network", to: "/network" },
+    { icon: "delete_sweep", label: "Disk Cleanup", to: "/cleanup" },
+    { icon: "shield", label: "Firewall", to: "/firewall" },
+    { icon: "monitor_heart", label: "Process Monitor", to: "/processes" },
 ];
 
 export function Sidebar() {

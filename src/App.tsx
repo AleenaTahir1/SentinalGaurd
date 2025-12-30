@@ -7,6 +7,9 @@ import { WifiPasswords } from "./pages/WifiPasswords";
 import { SystemInfo } from "./pages/SystemInfo";
 import { StartupPrograms } from "./pages/StartupPrograms";
 import { Network } from "./pages/Network";
+import { DiskCleanup } from "./pages/DiskCleanup";
+import { Firewall } from "./pages/Firewall";
+import { ProcessMonitor } from "./pages/ProcessMonitor";
 
 function App() {
   return (
@@ -20,6 +23,9 @@ function App() {
           <Route path="/system" element={<SystemInfo />} />
           <Route path="/startup" element={<StartupPrograms />} />
           <Route path="/network" element={<Network />} />
+          <Route path="/cleanup" element={<DiskCleanup />} />
+          <Route path="/firewall" element={<Firewall />} />
+          <Route path="/processes" element={<ProcessMonitor />} />
         </Route>
       </Routes>
     </BrowserRouter>
@@ -27,6 +33,3 @@ function App() {
 }
 
 export default App;
-
-
-

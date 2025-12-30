@@ -102,3 +102,56 @@ pub struct NetworkInfo {
     pub status: String,
 }
 
+/// Temp file info for cleanup
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TempFileInfo {
+    pub path: String,
+    pub size_mb: f64,
+    pub file_count: u32,
+}
+
+/// Cleanup result
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CleanupResult {
+    pub deleted_count: u32,
+    pub freed_mb: f64,
+    pub errors: Vec<String>,
+}
+
+/// Firewall rule
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct FirewallRule {
+    pub name: String,
+    pub enabled: bool,
+    pub direction: String,
+    pub action: String,
+    pub protocol: String,
+    pub local_port: String,
+}
+
+/// Firewall profile status
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct FirewallStatus {
+    pub domain_enabled: bool,
+    pub private_enabled: bool,
+    pub public_enabled: bool,
+}
+
+/// Process info
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ProcessInfo {
+    pub id: u32,
+    pub name: String,
+    pub cpu_percent: f64,
+    pub memory_mb: f64,
+    pub path: String,
+}
+
+/// Service info
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ServiceInfo {
+    pub name: String,
+    pub display_name: String,
+    pub status: String,
+    pub start_type: String,
+}

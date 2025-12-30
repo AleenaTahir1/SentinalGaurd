@@ -224,6 +224,120 @@ export async function getNetworkInfo(): Promise<NetworkInfo[]> {
     return invoke<NetworkInfo[]>("get_network_info");
 }
 
+// ============================================
+// Cleanup Types & Commands
+// ============================================
+
+export interface TempFileInfo {
+    path: string;
+    size_mb: number;
+    file_count: number;
+}
+
+export interface CleanupResult {
+    deleted_count: number;
+    freed_mb: number;
+    errors: string[];
+}
+
+export async function getTempInfo(): Promise<TempFileInfo[]> {
+    if (!isTauri()) return [];
+    return invoke<TempFileInfo[]>("get_temp_info");
+}
+
+export async function cleanTempFiles(): Promise<CleanupResult> {
+    if (!isTauri()) return { deleted_count: 0, freed_mb: 0, errors: [] };
+    return invoke<CleanupResult>("clean_temp_files");
+}
+
+// ============================================
+// Firewall Types & Commands
+// ============================================
+
+export interface FirewallRule {
+    name: string;
+    enabled: boolean;
+    direction: string;
+    action: string;
+    protocol: string;
+    local_port: string;
+}
+
+export interface FirewallStatus {
+    domain_enabled: boolean;
+    private_enabled: boolean;
+    public_enabled: boolean;
+}
+
+export async function getFirewallStatus(): Promise<FirewallStatus> {
+    if (!isTauri()) return { domain_enabled: false, private_enabled: false, public_enabled: false };
+    return invoke<FirewallStatus>("get_firewall_status");
+}
+
+export async function getFirewallRules(): Promise<FirewallRule[]> {
+    if (!isTauri()) return [];
+    return invoke<FirewallRule[]>("get_firewall_rules");
+}
+
+export async function blockPort(port: number, protocol: string, ruleName: string): Promise<void> {
+    if (!isTauri()) return;
+    return invoke("block_port", { port, protocol, ruleName });
+}
+
+export async function removeFirewallRule(ruleName: string): Promise<void> {
+    if (!isTauri()) return;
+    return invoke("remove_firewall_rule", { ruleName });
+}
+
+export async function enableFirewallLogging(): Promise<void> {
+    if (!isTauri()) return;
+    return invoke("enable_firewall_logging");
+}
+
+// ============================================
+// Process & Service Types & Commands
+// ============================================
+
+export interface ProcessInfo {
+    id: number;
+    name: string;
+    cpu_percent: number;
+    memory_mb: number;
+    path: string;
+}
+
+export interface ServiceInfo {
+    name: string;
+    display_name: string;
+    status: string;
+    start_type: string;
+}
+
+export async function getHighMemoryProcesses(): Promise<ProcessInfo[]> {
+    if (!isTauri()) return [];
+    return invoke<ProcessInfo[]>("get_high_memory_processes");
+}
+
+export async function killProcess(processId: number): Promise<void> {
+    if (!isTauri()) return;
+    return invoke("kill_process", { processId });
+}
+
+export async function getCriticalServices(): Promise<ServiceInfo[]> {
+    if (!isTauri()) return [];
+    return invoke<ServiceInfo[]>("get_critical_services");
+}
+
+export async function restartService(serviceName: string): Promise<void> {
+    if (!isTauri()) return;
+    return invoke("restart_service", { serviceName });
+}
+
+export async function startService(serviceName: string): Promise<void> {
+    if (!isTauri()) return;
+    return invoke("start_service", { serviceName });
+}
+
 // Convenience API object
 export const api = {
     getConnectedDevices,
@@ -244,6 +358,16 @@ export const api = {
     getSystemInfo,
     getStartupPrograms,
     getNetworkInfo,
+    getTempInfo,
+    cleanTempFiles,
+    getFirewallStatus,
+    getFirewallRules,
+    blockPort,
+    removeFirewallRule,
+    enableFirewallLogging,
+    getHighMemoryProcesses,
+    killProcess,
+    getCriticalServices,
+    restartService,
+    startService,
 };
-
-
