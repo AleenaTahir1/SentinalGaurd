@@ -45,3 +45,44 @@ pub fn get_network_info() -> Result<Vec<NetworkInfo>, String> {
 
     Ok(networks)
 }
+
+/// Gets current WiFi connection info (SSID and signal)
+#[tauri::command]
+pub fn get_connected_wifi() -> Result<Option<(String, String)>, String> {
+    let script = r#"
+        $wifi = netsh wlan show interfaces | Select-String -Pattern "^\s+SSID\s+:\s+(.+)$|^\s+Signal\s+:\s+(.+)$"
+        if ($wifi) {
+            $ssid = ""
+            $signal = ""
+            foreach ($line in $wifi) {
+                if ($line -match "SSID\s+:\s+(.+)") { $ssid = $matches[1].Trim() }
+                if ($line -match "Signal\s+:\s+(.+)") { $signal = $matches[1].Trim() }
+            }
+            if ($ssid) {
+                @{ ssid = $ssid; signal = $signal } | ConvertTo-Json -Compress
+            } else {
+                "null"
+            }
+        } else {
+            "null"
+        }
+    "#;
+
+    let json_output = powershell::execute(script).map_err(|e| e.to_string())?;
+
+    if json_output.is_empty() || json_output == "null" {
+        return Ok(None);
+    }
+
+    #[derive(serde::Deserialize)]
+    struct WifiConnection {
+        ssid: String,
+        signal: String,
+    }
+
+    let wifi: WifiConnection = serde_json::from_str(&json_output)
+        .map_err(|e| format!("JSON parse error: {}", e))?;
+
+    Ok(Some((wifi.ssid, wifi.signal)))
+}
+

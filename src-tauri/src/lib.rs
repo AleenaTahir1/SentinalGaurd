@@ -34,6 +34,7 @@ pub fn run() {
             startup::get_startup_programs,
             // Network commands
             network::get_network_info,
+            network::get_connected_wifi,
             // Cleanup commands
             cleanup::get_temp_info,
             cleanup::clean_temp_files,

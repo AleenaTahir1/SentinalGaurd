@@ -224,6 +224,11 @@ export async function getNetworkInfo(): Promise<NetworkInfo[]> {
     return invoke<NetworkInfo[]>("get_network_info");
 }
 
+export async function getConnectedWifi(): Promise<[string, string] | null> {
+    if (!isTauri()) return null;
+    return invoke<[string, string] | null>("get_connected_wifi");
+}
+
 // ============================================
 // Cleanup Types & Commands
 // ============================================
@@ -358,6 +363,7 @@ export const api = {
     getSystemInfo,
     getStartupPrograms,
     getNetworkInfo,
+    getConnectedWifi,
     getTempInfo,
     cleanTempFiles,
     getFirewallStatus,
