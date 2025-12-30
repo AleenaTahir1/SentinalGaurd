@@ -47,6 +47,7 @@ pub fn write_json<T: Serialize>(filename: &str, data: &T) -> Result<(), StorageE
 }
 
 /// Deletes a JSON file from the app data directory
+#[allow(dead_code)]
 pub fn delete_json(filename: &str) -> Result<(), StorageError> {
     let path = get_app_data_dir()?.join(filename);
     if path.exists() {

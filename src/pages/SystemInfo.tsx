@@ -27,41 +27,163 @@ export function SystemInfo() {
         );
     }
 
+    const ramUsedPercent = systemInfo
+        ? ((systemInfo.total_ram_gb - systemInfo.available_ram_gb) / systemInfo.total_ram_gb) * 100
+        : 0;
+    const diskUsedPercent = systemInfo
+        ? ((systemInfo.disk_total_gb - systemInfo.disk_free_gb) / systemInfo.disk_total_gb) * 100
+        : 0;
+
     return (
-        <div className="max-w-5xl mx-auto w-full p-8 flex flex-col gap-8">
+        <div className="max-w-5xl mx-auto w-full p-8 flex flex-col gap-6">
             {/* Page Header */}
-            <div>
-                <h1 className="text-2xl font-bold text-white mb-1 flex items-center gap-3">
-                    <svg className="w-7 h-7 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                    System Info
-                </h1>
-                <p className="text-slate-400 text-sm">Computer hardware and operating system details</p>
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="text-2xl font-bold text-white mb-1 flex items-center gap-3">
+                        <span className="material-symbols-outlined text-cyan-400 text-3xl">computer</span>
+                        System Information
+                    </h1>
+                    <p className="text-slate-400 text-sm">Hardware specifications and system status</p>
+                </div>
+                <div className="text-right">
+                    <p className="text-xs text-slate-500">System Uptime</p>
+                    <p className="text-xl font-mono text-cyan-400">{systemInfo?.uptime_hours?.toFixed(1)}h</p>
+                </div>
             </div>
 
-            {/* System Info Cards */}
-            <section className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
-                {systemInfo && (
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        <InfoCard label="Computer Name" value={systemInfo.computer_name} />
-                        <InfoCard label="Operating System" value={systemInfo.os_name} />
-                        <InfoCard label="OS Version" value={systemInfo.os_version} />
-                        <InfoCard label="Processor" value={systemInfo.cpu_name} />
-                        <InfoCard label="CPU Cores" value={systemInfo.cpu_cores.toString()} />
-                        <InfoCard label="Total RAM" value={`${systemInfo.total_ram_gb} GB`} />
+            {/* User & Computer Info */}
+            <div className="bg-gradient-to-br from-slate-800/80 to-slate-800/40 rounded-xl p-6 border border-slate-700/50">
+                <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Identity</h2>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <InfoCard label="Computer Name" value={systemInfo?.computer_name ?? ''} icon="dns" />
+                    <InfoCard label="Username" value={systemInfo?.username ?? ''} icon="person" />
+                    <InfoCard label="Domain" value={systemInfo?.domain ?? ''} icon="domain" />
+                    <InfoCard label="Last Boot" value={systemInfo?.last_boot ?? ''} icon="schedule" />
+                </div>
+            </div>
+
+            {/* Operating System */}
+            <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
+                <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Operating System</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="md:col-span-2">
+                        <p className="text-xs text-slate-500 mb-1">OS Name</p>
+                        <p className="text-lg text-white font-medium">{systemInfo?.os_name}</p>
                     </div>
-                )}
-            </section>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <p className="text-xs text-slate-500 mb-1">Version</p>
+                            <p className="text-sm text-white font-mono">{systemInfo?.os_version}</p>
+                        </div>
+                        <div>
+                            <p className="text-xs text-slate-500 mb-1">Build</p>
+                            <p className="text-sm text-white font-mono">{systemInfo?.os_build}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* CPU & Memory */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* CPU */}
+                <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
+                    <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <span className="material-symbols-outlined text-lg">memory</span>
+                        Processor
+                    </h2>
+                    <p className="text-white font-medium mb-4">{systemInfo?.cpu_name}</p>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+                            <p className="text-2xl font-bold text-cyan-400">{systemInfo?.cpu_cores}</p>
+                            <p className="text-xs text-slate-500">Cores</p>
+                        </div>
+                        <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+                            <p className="text-2xl font-bold text-cyan-400">{systemInfo?.cpu_threads}</p>
+                            <p className="text-xs text-slate-500">Threads</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Memory */}
+                <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
+                    <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <span className="material-symbols-outlined text-lg">sd_card</span>
+                        Memory (RAM)
+                    </h2>
+                    <div className="mb-4">
+                        <div className="flex justify-between text-sm mb-2">
+                            <span className="text-slate-400">Used</span>
+                            <span className="text-white font-mono">
+                                {(systemInfo!.total_ram_gb - systemInfo!.available_ram_gb).toFixed(1)} / {systemInfo?.total_ram_gb} GB
+                            </span>
+                        </div>
+                        <div className="h-4 bg-slate-700 rounded-full overflow-hidden">
+                            <div
+                                className={`h-full rounded-full transition-all ${ramUsedPercent > 80 ? 'bg-red-500' : ramUsedPercent > 60 ? 'bg-yellow-500' : 'bg-cyan-500'}`}
+                                style={{ width: `${ramUsedPercent}%` }}
+                            />
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+                            <p className="text-xl font-bold text-green-400">{systemInfo?.available_ram_gb?.toFixed(1)}</p>
+                            <p className="text-xs text-slate-500">GB Available</p>
+                        </div>
+                        <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+                            <p className="text-xl font-bold text-white">{ramUsedPercent.toFixed(0)}%</p>
+                            <p className="text-xs text-slate-500">Usage</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Disk Storage */}
+            <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
+                <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+                    <span className="material-symbols-outlined text-lg">hard_drive</span>
+                    Storage (C: Drive)
+                </h2>
+                <div className="mb-4">
+                    <div className="flex justify-between text-sm mb-2">
+                        <span className="text-slate-400">Used Space</span>
+                        <span className="text-white font-mono">
+                            {(systemInfo!.disk_total_gb - systemInfo!.disk_free_gb).toFixed(0)} / {systemInfo?.disk_total_gb?.toFixed(0)} GB
+                        </span>
+                    </div>
+                    <div className="h-4 bg-slate-700 rounded-full overflow-hidden">
+                        <div
+                            className={`h-full rounded-full transition-all ${diskUsedPercent > 90 ? 'bg-red-500' : diskUsedPercent > 75 ? 'bg-yellow-500' : 'bg-emerald-500'}`}
+                            style={{ width: `${diskUsedPercent}%` }}
+                        />
+                    </div>
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                    <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+                        <p className="text-xl font-bold text-white">{systemInfo?.disk_total_gb?.toFixed(0)}</p>
+                        <p className="text-xs text-slate-500">GB Total</p>
+                    </div>
+                    <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+                        <p className="text-xl font-bold text-emerald-400">{systemInfo?.disk_free_gb?.toFixed(0)}</p>
+                        <p className="text-xs text-slate-500">GB Free</p>
+                    </div>
+                    <div className="bg-slate-900/50 rounded-lg p-3 text-center">
+                        <p className="text-xl font-bold text-white">{diskUsedPercent.toFixed(0)}%</p>
+                        <p className="text-xs text-slate-500">Used</p>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
 
-function InfoCard({ label, value }: { label: string; value: string }) {
+function InfoCard({ label, value, icon }: { label: string; value: string; icon: string }) {
     return (
-        <div className="bg-slate-900/50 rounded-lg p-3">
-            <p className="text-xs text-slate-400 mb-1">{label}</p>
-            <p className="text-sm text-white font-medium truncate" title={value}>{value}</p>
+        <div className="bg-slate-900/50 rounded-lg p-3 flex items-center gap-3">
+            <span className="material-symbols-outlined text-slate-500 text-lg">{icon}</span>
+            <div className="min-w-0">
+                <p className="text-xs text-slate-500">{label}</p>
+                <p className="text-sm text-white font-medium truncate" title={value}>{value}</p>
+            </div>
         </div>
     );
 }

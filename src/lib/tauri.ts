@@ -53,10 +53,19 @@ export interface WifiProfile {
 export interface SystemInfo {
     os_name: string;
     os_version: string;
+    os_build: string;
     computer_name: string;
+    username: string;
+    domain: string;
     total_ram_gb: number;
+    available_ram_gb: number;
     cpu_name: string;
     cpu_cores: number;
+    cpu_threads: number;
+    uptime_hours: number;
+    disk_total_gb: number;
+    disk_free_gb: number;
+    last_boot: string;
 }
 
 // ============================================
@@ -168,10 +177,19 @@ export async function getSystemInfo(): Promise<SystemInfo> {
         return {
             os_name: "Unknown",
             os_version: "",
+            os_build: "",
             computer_name: "",
+            username: "",
+            domain: "",
             total_ram_gb: 0,
+            available_ram_gb: 0,
             cpu_name: "",
             cpu_cores: 0,
+            cpu_threads: 0,
+            uptime_hours: 0,
+            disk_total_gb: 0,
+            disk_free_gb: 0,
+            last_boot: "",
         };
     }
     return invoke<SystemInfo>("get_system_info");

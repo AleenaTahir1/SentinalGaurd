@@ -66,10 +66,19 @@ pub struct WifiProfile {
 pub struct SystemInfo {
     pub os_name: String,
     pub os_version: String,
+    pub os_build: String,
     pub computer_name: String,
+    pub username: String,
+    pub domain: String,
     pub total_ram_gb: f64,
+    pub available_ram_gb: f64,
     pub cpu_name: String,
     pub cpu_cores: u32,
+    pub cpu_threads: u32,
+    pub uptime_hours: f64,
+    pub disk_total_gb: f64,
+    pub disk_free_gb: f64,
+    pub last_boot: String,
 }
 
 /// Startup program entry

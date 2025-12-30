@@ -1,5 +1,5 @@
 use crate::models::{UsbDevice, DashboardStats};
-use crate::services::{powershell, storage};
+use crate::services::powershell;
 use crate::commands::whitelist::is_device_trusted;
 
 /// Gets all connected USB devices with their trust status
