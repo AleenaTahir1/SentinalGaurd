@@ -45,10 +45,8 @@ export function TitleBar() {
 
     return (
         <header className="app-drag-region flex items-center justify-between border-b border-border-dark bg-[#111927] px-6 py-3 shrink-0 h-16 z-20 relative">
-            <div className="flex items-center gap-4 text-white">
-                <div className="size-8 text-primary flex items-center justify-center">
-                    <span className="material-symbols-outlined text-[32px]">security</span>
-                </div>
+            <div className="flex items-center gap-3 text-white">
+                <img src="/logo.svg" alt="SentinelGuard" className="size-8" />
                 <h2 className="text-white text-lg font-bold leading-tight tracking-tight">SentinelGuard</h2>
             </div>
 
