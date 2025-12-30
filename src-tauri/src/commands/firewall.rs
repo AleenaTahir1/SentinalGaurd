@@ -19,23 +19,26 @@ pub fn get_firewall_status() -> Result<FirewallStatus, String> {
     Ok(status)
 }
 
-/// Gets firewall rules (limited to first 50 for performance)
+/// Gets firewall rules (Prioritizes SentinelGuard rules, then recent/active ones)
 #[tauri::command]
 pub fn get_firewall_rules() -> Result<Vec<FirewallRule>, String> {
     let script = r#"
-        Get-NetFirewallRule -ErrorAction SilentlyContinue | 
-            Select-Object -First 50 |
-            ForEach-Object {
-                $portFilter = Get-NetFirewallPortFilter -AssociatedNetFirewallRule $_ -ErrorAction SilentlyContinue
-                @{
-                    name = $_.DisplayName
-                    enabled = $_.Enabled -eq 'True'
-                    direction = $_.Direction.ToString()
-                    action = $_.Action.ToString()
-                    protocol = if ($portFilter.Protocol) { $portFilter.Protocol } else { "Any" }
-                    local_port = if ($portFilter.LocalPort) { $portFilter.LocalPort -join ',' } else { "Any" }
-                }
-            } | ConvertTo-Json -Compress
+        $sgRules = Get-NetFirewallRule -Description "SentinelGuard Managed Rule" -ErrorAction SilentlyContinue
+        $otherRules = Get-NetFirewallRule -ErrorAction SilentlyContinue | Select-Object -First 50
+        
+        $allRules = @($sgRules) + @($otherRules) | Select-Object -Unique -Property Name
+        
+        $allRules | ForEach-Object {
+            $portFilter = Get-NetFirewallPortFilter -AssociatedNetFirewallRule $_ -ErrorAction SilentlyContinue
+            @{
+                name = $_.DisplayName
+                enabled = $_.Enabled -eq 'True'
+                direction = $_.Direction.ToString()
+                action = $_.Action.ToString()
+                protocol = if ($portFilter.Protocol) { $portFilter.Protocol } else { "Any" }
+                local_port = if ($portFilter.LocalPort) { $portFilter.LocalPort -join ',' } else { "Any" }
+            }
+        } | ConvertTo-Json -Compress
     "#;
 
     let json_output = powershell::execute(script).map_err(|e| e.to_string())?;
@@ -59,7 +62,7 @@ pub fn get_firewall_rules() -> Result<Vec<FirewallRule>, String> {
 #[tauri::command]
 pub fn block_port(port: u16, protocol: String, rule_name: String) -> Result<(), String> {
     let script = format!(
-        r#"New-NetFirewallRule -DisplayName '{}' -Direction Inbound -LocalPort {} -Protocol {} -Action Block -ErrorAction Stop"#,
+        r#"New-NetFirewallRule -DisplayName '{}' -Description "SentinelGuard Managed Rule" -Direction Inbound -LocalPort {} -Protocol {} -Action Block -ErrorAction Stop"#,
         rule_name.replace("'", "''"), port, protocol
     );
 

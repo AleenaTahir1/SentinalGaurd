@@ -8,6 +8,12 @@ export function Firewall() {
     const [showBlockModal, setShowBlockModal] = useState(false);
     const [blockForm, setBlockForm] = useState({ port: "", protocol: "TCP", name: "" });
     const [actionLoading, setActionLoading] = useState(false);
+    const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+
+    const showToast = (message: string, type: "success" | "error" = "success") => {
+        setToast({ message, type });
+        setTimeout(() => setToast(null), 3000);
+    };
 
     const fetchData = async () => {
         try {
@@ -19,6 +25,7 @@ export function Firewall() {
             setRules(rulesData);
         } catch (error) {
             console.error("Failed to fetch firewall data:", error);
+            showToast("Failed to fetch firewall status", "error");
         } finally {
             setLoading(false);
         }
@@ -36,8 +43,10 @@ export function Firewall() {
             setShowBlockModal(false);
             setBlockForm({ port: "", protocol: "TCP", name: "" });
             await fetchData();
+            showToast(`Port ${blockForm.port} blocked successfully`);
         } catch (error) {
             console.error("Failed to block port:", error);
+            showToast("Failed to block port. Run as Administrator.", "error");
         } finally {
             setActionLoading(false);
         }
@@ -49,8 +58,10 @@ export function Firewall() {
         try {
             await api.removeFirewallRule(ruleName);
             await fetchData();
+            showToast(`Rule "${ruleName}" removed`);
         } catch (error) {
             console.error("Failed to remove rule:", error);
+            showToast("Failed to remove rule", "error");
         } finally {
             setActionLoading(false);
         }
@@ -60,9 +71,10 @@ export function Firewall() {
         setActionLoading(true);
         try {
             await api.enableFirewallLogging();
-            alert("Firewall logging enabled for all profiles");
+            showToast("Firewall logging enabled for all profiles");
         } catch (error) {
             console.error("Failed to enable logging:", error);
+            showToast("Failed to enable logging. Run as Administrator.", "error");
         } finally {
             setActionLoading(false);
         }
@@ -77,7 +89,20 @@ export function Firewall() {
     }
 
     return (
-        <div className="max-w-5xl mx-auto w-full p-8 flex flex-col gap-6">
+        <div className="max-w-5xl mx-auto w-full p-8 flex flex-col gap-6 relative">
+            {/* Toast Notification */}
+            {toast && (
+                <div className={`fixed bottom-8 right-8 z-[100] px-4 py-3 rounded-lg shadow-xl flex items-center gap-3 animate-slide-in-up backdrop-blur-md ${toast.type === "success"
+                        ? "bg-green-500/20 text-green-400 ring-1 ring-green-500/30"
+                        : "bg-red-500/20 text-red-400 ring-1 ring-red-500/30"
+                    }`}>
+                    <span className="material-symbols-outlined text-[24px]">
+                        {toast.type === "success" ? "check_circle" : "error"}
+                    </span>
+                    <span className="text-sm font-bold tracking-wide">{toast.message}</span>
+                </div>
+            )}
+
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
@@ -114,8 +139,9 @@ export function Firewall() {
 
             {/* Rules Table */}
             <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50">
-                <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">
-                    Firewall Rules (First 50)
+                <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4 flex justify-between items-center">
+                    <span>Firewall Rules</span>
+                    <span className="text-xs bg-slate-700 px-2 py-1 rounded">Showing SentinelGuard & System Rules</span>
                 </h2>
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm">
@@ -131,7 +157,7 @@ export function Firewall() {
                             </tr>
                         </thead>
                         <tbody>
-                            {rules.slice(0, 20).map((rule, index) => (
+                            {rules.map((rule, index) => (
                                 <tr key={index} className="border-b border-slate-700/50 hover:bg-slate-700/20">
                                     <td className="py-3 text-white truncate max-w-[200px]" title={rule.name}>
                                         {rule.name}
@@ -151,13 +177,20 @@ export function Firewall() {
                                     <td className="py-3">
                                         <button
                                             onClick={() => handleRemoveRule(rule.name)}
-                                            className="text-red-400 hover:text-red-300 text-xs"
+                                            className="text-red-400 hover:text-red-300 text-xs hover:underline"
                                         >
                                             Remove
                                         </button>
                                     </td>
                                 </tr>
                             ))}
+                            {rules.length === 0 && (
+                                <tr>
+                                    <td colSpan={7} className="py-4 text-center text-slate-500">
+                                        No rules found (or permission denied)
+                                    </td>
+                                </tr>
+                            )}
                         </tbody>
                     </table>
                 </div>
@@ -165,8 +198,8 @@ export function Firewall() {
 
             {/* Block Port Modal */}
             {showBlockModal && (
-                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                    <div className="bg-slate-800 rounded-xl p-6 max-w-md w-full mx-4 border border-slate-700">
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-fade-in">
+                    <div className="bg-slate-800 rounded-xl p-6 max-w-md w-full mx-4 border border-slate-700 shadow-xl">
                         <h3 className="text-lg font-bold text-white mb-4">Block Inbound Port</h3>
                         <div className="space-y-4">
                             <div>
@@ -176,7 +209,7 @@ export function Firewall() {
                                     value={blockForm.name}
                                     onChange={(e) => setBlockForm({ ...blockForm, name: e.target.value })}
                                     placeholder="e.g., Block SMB"
-                                    className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white"
+                                    className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none focus:border-cyan-400 transition-colors"
                                 />
                             </div>
                             <div className="grid grid-cols-2 gap-4">
@@ -187,7 +220,7 @@ export function Firewall() {
                                         value={blockForm.port}
                                         onChange={(e) => setBlockForm({ ...blockForm, port: e.target.value })}
                                         placeholder="445"
-                                        className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white"
+                                        className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none focus:border-cyan-400 transition-colors"
                                     />
                                 </div>
                                 <div>
@@ -195,7 +228,7 @@ export function Firewall() {
                                     <select
                                         value={blockForm.protocol}
                                         onChange={(e) => setBlockForm({ ...blockForm, protocol: e.target.value })}
-                                        className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white"
+                                        className="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white outline-none focus:border-cyan-400 transition-colors"
                                     >
                                         <option value="TCP">TCP</option>
                                         <option value="UDP">UDP</option>
@@ -206,15 +239,16 @@ export function Firewall() {
                         <div className="flex gap-3 justify-end mt-6">
                             <button
                                 onClick={() => setShowBlockModal(false)}
-                                className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg"
+                                className="px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleBlockPort}
                                 disabled={actionLoading || !blockForm.port || !blockForm.name}
-                                className="px-4 py-2 bg-red-600 hover:bg-red-500 disabled:bg-slate-600 text-white rounded-lg"
+                                className="px-4 py-2 bg-red-600 hover:bg-red-500 disabled:bg-slate-600 text-white rounded-lg transition-colors flex items-center gap-2"
                             >
+                                {actionLoading && <span className="material-symbols-outlined text-sm animate-spin">progress_activity</span>}
                                 Block Port
                             </button>
                         </div>
@@ -225,11 +259,13 @@ export function Firewall() {
     );
 }
 
+// ... StatusCard stays same ...
+
 function StatusCard({ label, enabled }: { label: string; enabled: boolean }) {
     return (
         <div className={`rounded-xl p-4 border ${enabled
-                ? 'bg-green-500/10 border-green-500/20'
-                : 'bg-red-500/10 border-red-500/20'
+            ? 'bg-green-500/10 border-green-500/20'
+            : 'bg-red-500/10 border-red-500/20'
             }`}>
             <p className="text-sm text-slate-400">{label} Network</p>
             <div className="flex items-center gap-2 mt-1">
