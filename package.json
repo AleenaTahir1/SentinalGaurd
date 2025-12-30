@@ -2,6 +2,12 @@
   "name": "sentinelguard",
   "private": true,
   "version": "0.1.0",
+  "description": "Endpoint Security & Hardware Access Control System",
+  "author": "Aleena Tahir, Saqlain Abbas",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AleenaTahir1/SentinelGuard.git"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",

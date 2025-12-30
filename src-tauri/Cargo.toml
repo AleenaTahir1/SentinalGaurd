@@ -2,7 +2,7 @@
 name = "sentinelguard"
 version = "0.1.0"
 description = "Endpoint Security & Hardware Access Control System"
-authors = ["you"]
+authors = ["Aleena Tahir", "Saqlain Abbas"]
 edition = "2021"
 
 [lib]

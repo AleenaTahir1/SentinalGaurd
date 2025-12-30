@@ -4,7 +4,7 @@ Endpoint Security and Hardware Access Control System for Windows
 
 ## Overview
 
-SentinelGuard is a desktop security application that protects Windows workstations from unauthorized hardware attacks such as BadUSB and data theft. Unlike traditional antivirus software that focuses on file scanning, SentinelGuard secures physical hardware ports by monitoring and controlling USB device access.
+SentinelGuard is a comprehensive endpoint security and system maintenance suite for Windows. While its core strength lies in securing physical hardware ports against threats like BadUSB, it extends protection to the network and system layers. SentinelGuard empowers users with tools to manage firewall rules, monitor running processes, clean system junk, and control startup programs—all from a single, modern interface. It fills the gap between basic antivirus software and complex system administration tools.
 
 ## Features
 
@@ -12,6 +12,7 @@ SentinelGuard is a desktop security application that protects Windows workstatio
 - **Whitelist Management**: One-click trust/block for USB devices
 - **Firewall & Network**: View/Block ports, manage firewall rules, and monitor network traffic
 - **System Maintenance**: Disk cleanup, process monitoring, and startup program management
+- **Wi-Fi Security**: Retrieve saved Wi-Fi passwords and analyze network details
 - **Security Logs**: Comprehensive event logging for all system and device activities
 - **Modern Dashboard**: Security status overview, quick actions, and system health stats
 
@@ -27,7 +28,7 @@ SentinelGuard is a desktop security application that protects Windows workstatio
 
 ### From Release
 
-1. Download the latest release from the [Releases](https://github.com/Razee4315/SentinelGuard/releases) page
+1. Download the latest release from the [Releases](https://github.com/AleenaTahir1/SentinelGuard/releases) page
 2. Run the `.msi` or `.exe` installer
 3. Launch SentinelGuard
 
@@ -88,4 +89,5 @@ MIT License
 ## Author
 
 Aleena Tahir 
+
 Saqlain Abbas
