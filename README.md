@@ -8,11 +8,12 @@ SentinelGuard is a desktop security application that protects Windows workstatio
 
 ## Features
 
-- **Real-time USB Monitoring**: Automatically detects all connected USB devices with detailed information including device name, serial ID, and vendor
-- **Whitelist Management**: One-click authorization to trust or block devices, with persistent storage of trusted device configurations
-- **Security Event Logging**: Comprehensive logging of all USB insertion events, device blocks, and system actions with searchable and exportable logs
-- **Device Blocking**: Instantly disable untrusted devices at the hardware level (requires administrator privileges)
-- **Modern Dashboard**: Clean, intuitive interface showing system security status at a glance
+- **Real-time USB Monitoring**: Detects device insertion/removal with detailed hardware info
+- **Whitelist Management**: One-click trust/block for USB devices
+- **Firewall & Network**: View/Block ports, manage firewall rules, and monitor network traffic
+- **System Maintenance**: Disk cleanup, process monitoring, and startup program management
+- **Security Logs**: Comprehensive event logging for all system and device activities
+- **Modern Dashboard**: Security status overview, quick actions, and system health stats
 
 ## Architecture
 
@@ -20,7 +21,7 @@ SentinelGuard is a desktop security application that protects Windows workstatio
 |-------|-----------|----------------|
 | Frontend | React + TypeScript | User interface and interaction |
 | Bridge | Tauri (Rust) | System integration and command execution |
-| Execution | PowerShell | Hardware control via Windows PnP Manager |
+| Execution | PowerShell | System management, firewall control, and hardware access |
 
 ## Installation
 
@@ -54,14 +55,11 @@ bun run tauri build
 
 ## Usage
 
-### Dashboard
-The main dashboard displays the current security status. A green shield indicates no unauthorized devices are connected. The stats section shows total scans and blocked threats.
-
-### Device Manager
-View all connected USB devices. Toggle the switch to trust or block individual devices. Trusted devices are stored in a local whitelist and will be automatically allowed on future connections.
-
-### Security Logs
-Browse all security events with filtering by severity level. Supports regex search and log export functionality.
+## Usage
+- **Dashboard**: View system health, security status, and quick actions.
+- **Security Tools**: Manage USB devices, Firewall rules, and Process/Service monitoring.
+- **System Utilities**: Clean junk files, manage startup programs, and view network/system info.
+- **Logs**: Track all security events and system activities.
 
 ## Administrator Privileges
 
