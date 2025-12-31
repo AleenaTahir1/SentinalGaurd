@@ -88,6 +88,6 @@ MIT License
 
 ## Author
 
-Aleena Tahir 
+Aleena Tahir (aleena23006@gmail.com)
 
-Saqlain Abbas
+Saqlain Abbas (saqlainrazee@gmail.com)
